@@ -1,0 +1,28 @@
+@startuml
+title Gate Service
+
+class GateController {
+  + openGate()
+  + closeGate()
+  + getGateStatus(): string
+}
+
+class GateService {
+  - repository: GateRepository
+  - deviceClient: DeviceClient
+  + processGateCommand(cmd: string)
+}
+
+class GateRepository {
+  + saveState(gateId: string, state: string)
+  + getState(gateId: string): string
+}
+
+class DeviceClient {
+  + sendCommand(deviceId: string, command: string)
+}
+
+GateController --> GateService
+GateService --> GateRepository
+GateService --> DeviceClient
+@enduml

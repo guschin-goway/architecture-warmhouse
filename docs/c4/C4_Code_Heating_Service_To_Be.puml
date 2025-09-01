@@ -1,0 +1,34 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Heating Service
+
+Container_Boundary(heatingService, "Heating Service") {
+
+  class HeatingController {
+    + setTemperature(temp: int)
+    + turnOn()
+    + turnOff()
+  }
+
+  class HeatingService {
+    - repository: HeatingRepository
+    - deviceClient: DeviceClient
+    + applySchedule(scheduleId: int)
+    + processCommand(cmd: string)
+  }
+
+  class HeatingRepository {
+    + saveState(deviceId: string, state: string)
+    + getState(deviceId: string): string
+  }
+
+  class DeviceClient {
+    + sendCommand(deviceId: string, command: string)
+  }
+
+  HeatingController --> HeatingService : "вызывает"
+  HeatingService --> HeatingRepository : "использует"
+  HeatingService --> DeviceClient : "отправляет команды"
+}
+@enduml

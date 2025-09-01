@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Lighting Service
+
+Container_Boundary(lighting, "Lighting Service") {
+  Component(LightingAPI, "Lighting API", "REST API", "Управление светом")
+  Component(LightingController, "Lighting Controller", "Бизнес-логика", "Логика включения, выключения, яркости")
+  Component(LightingRepository, "Lighting Repository", "PostgreSQL", "Хранение состояния светильников")
+  Component(DeviceAdapter, "Device Adapter", "gRPC", "Обмен командами с устройствами")
+}
+
+Rel(LightingAPI, LightingController, "Передает команды")
+Rel(LightingController, LightingRepository, "Читает/сохраняет состояние")
+Rel(LightingController, DeviceAdapter, "Отправляет команды устройствам")
+@enduml

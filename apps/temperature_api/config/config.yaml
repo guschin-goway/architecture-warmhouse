@@ -1,0 +1,14 @@
+app:
+  name: "Temperature api"
+  version: "1.0.0"
+  env: "development"
+  port: 8081
+  ssl_enable: false
+  ssl_config:
+    cert_path: /certs/fullchain.pem
+    key_path: /certs/privkey.pem
+
+log:
+  level: "debug"
+  format: "console"
+  enable_caller: true

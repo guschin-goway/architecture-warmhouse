@@ -1,0 +1,97 @@
+@startuml
+!theme plain
+title WarmHouse
+
+entity "User" as user {
+  *id : UUID
+  --
+  name : string
+  email : string
+  password_hash : string
+}
+
+entity "UserDevice" as user_device {
+  *user_id : UUID
+  *device_id : UUID
+  --
+  permissions : enum(owner, viewer)
+}
+
+entity "HeatingDevice" as heating_device {
+  *id : UUID
+  --
+  name : string
+  status : enum(on, off)
+  current_temp : float
+  target_temp : float
+}
+
+entity "HeatingSchedule" as heating_schedule {
+  *id : UUID
+  *device_id : UUID
+  --
+  cron_expr : string
+  action : string
+}
+
+entity "LightDevice" as light_device {
+  *id : UUID
+  --
+  name : string
+  status : enum(on, off)
+  brightness : int
+  color : string
+}
+
+entity "LightingSchedule" as lighting_schedule {
+  *id : UUID
+  *device_id : UUID
+  --
+  cron_expr : string
+  action : string
+}
+
+entity "GateDevice" as gate_device {
+  *id : UUID
+  --
+  name : string
+  status : enum(open, closed)
+}
+
+entity "GateSchedule" as gate_schedule {
+  *id : UUID
+  *device_id : UUID
+  --
+  cron_expr : string
+  action : string
+}
+
+entity "CameraDevice" as camera_device {
+  *id : UUID
+  --
+  name : string
+  ip_address : string
+  status : enum(active, inactive)
+}
+
+entity "SensorDevice" as sensor_device {
+  *id : UUID
+  --
+  name : string
+  type : enum(temp, motion, humidity, smoke)
+  last_value : string
+}
+
+' Relationships
+user ||--o{ user_device : Владелец
+user_device }o--|| heating_device : Управление
+user_device }o--|| light_device : Управление
+user_device }o--|| gate_device : Управление
+user_device }o--|| camera_device : Управление
+user_device }o--|| sensor_device : Управление
+
+heating_device ||--o{ heating_schedule : scheduled by
+light_device ||--o{ lighting_schedule : scheduled by
+gate_device ||--o{ gate_schedule : scheduled by
+
+@enduml

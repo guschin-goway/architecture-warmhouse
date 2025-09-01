@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  description: Temperature api
+  title: Temperature api
+  version: actual
+servers:
+  - url: http://{host}:{port}
+    variables:
+      host:
+        default: "127.0.0.1"
+        description: Хост API сервера
+      port:
+        default: "8081"
+        description: Порт API сервера
+
+paths:
+  /temperature/{sensorID}:
+    get:
+      parameters:
+        - name: sensorID
+          in: path
+          required: false
+          schema:
+            type: string
+      operationId: get_temperature_by_sensorID
+      responses:
+        200:
+          description: Получить температуру по идентификатору сенсора
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemperatureResponse'
+
+components:
+  schemas:
+    TemperatureResponse:
+      type: object
+      required:
+        - value
+        - sensor_id
+        - location
+        - timestamp
+      properties:
+        value:
+          type: number
+        sensor_id:
+          type: string
+        location:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+
+
