@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Gate Service
+
+Container_Boundary(gate, "Gate Service") {
+  Component(GateAPI, "Gate API", "REST API", "Управление воротами")
+  Component(GateController, "Gate Controller", "Бизнес-логика", "Определяет открытие/закрытие ворот")
+  Component(GateRepository, "Gate Repository", "PostgreSQL", "Хранение состояния ворот")
+  Component(DeviceAdapter, "Device Adapter", "gRPC", "Интеграция с воротами")
+}
+
+Rel(GateAPI, GateController, "Передает команды")
+Rel(GateController, GateRepository, "Читает/сохраняет состояние")
+Rel(GateController, DeviceAdapter, "Отправляет команды воротам")
+@enduml

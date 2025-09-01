@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: WarmHouse API
+  description: API для взаимодействия микросервисов экосистемы умного дома WarmHouse
+  version: "1.0.0"
+
+tags:
+  - name: User methods
+  - name: Devices methods
+  - name: Sensors methods
+
+paths:
+  /users/{userId}:
+    get:
+      tags:
+        - User methods
+      summary: Получить информацию о пользователе
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Информация о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Пользователь не найден
+
+  /devices/{deviceId}:
+    get:
+      tags:
+        - Devices methods
+      summary: Получить информацию об устройстве
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Информация об устройстве
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Device"
+        "404":
+          description: Устройство не найдено
+
+  /devices/{deviceId}/state:
+    post:
+      tags:
+        - Devices methods
+      summary: Обновить состояние устройства (вкл/выкл, температура, яркость)
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceStateUpdate"
+      responses:
+        "200":
+          description: Устройство обновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Device"
+        "400":
+          description: Некорректный запрос
+        "404":
+          description: Устройство не найдено
+
+  /devices/{deviceId}/schedule:
+    post:
+      tags:
+        - Devices methods
+      summary: Добавить расписание для устройства
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Schedule"
+      responses:
+        "201":
+          description: Расписание добавлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedule"
+        "400":
+          description: Ошибка в данных
+        "404":
+          description: Устройство не найдено
+
+  /sensors/{sensorId}/telemetry:
+    post:
+      tags:
+        - Sensors methods
+      summary: Отправить данные с датчика
+      parameters:
+        - name: sensorId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SensorTelemetry"
+      responses:
+        "202":
+          description: Данные приняты для обработки
+        "400":
+          description: Некорректный формат данных
+        "404":
+          description: Датчик не найден
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [heating, light, gate, camera]
+        name:
+          type: string
+        status:
+          type: string
+          example: "on"
+
+    DeviceStateUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [on, off]
+        target_temp:
+          type: number
+          format: float
+          example: 22.5
+        brightness:
+          type: integer
+          example: 80
+        color:
+          type: string
+          example: "#ffffff"
+
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        cron_expr:
+          type: string
+          example: "0 7 * * *"
+        action:
+          type: string
+          example: "turn_on"
+
+    SensorTelemetry:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        value:
+          type: string
+          example: "23.5"

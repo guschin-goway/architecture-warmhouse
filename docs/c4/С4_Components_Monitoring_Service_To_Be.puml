@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Monitoring Service
+
+Container_Boundary(monitoring, "Monitoring Service") {
+  Component(MonitoringAPI, "Monitoring API", "REST API", "Запрос телеметрии и видеопотока")
+  Component(MonitoringController, "Monitoring Controller", "Бизнес-логика", "Обработка запросов телеметрии и камер")
+  Component(MonitoringRepository, "Monitoring Repository", "PostgreSQL/TimeSeries DB", "Хранение телеметрии и исторических данных")
+  Component(DeviceAdapter, "Device Adapter", "gRPC", "Подключение к камерам и сенсорам")
+}
+
+Rel(MonitoringAPI, MonitoringController, "Запросы телеметрии")
+Rel(MonitoringController, MonitoringRepository, "Читает/сохраняет данные")
+Rel(MonitoringController, DeviceAdapter, "Получает данные с датчиков/камер")
+@enduml

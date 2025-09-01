@@ -1,0 +1,44 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Пользователь", "Владелец дома. Управляет устройствами через веб/мобильный интерфейс")
+Person(technician, "Техник", "Помогает пользователям при подключении")
+
+System_Boundary(warmhouse, "WarmHouse SaaS") {
+
+  Container(webapp, "Web/Mobile App", "React/Flutter", "Интерфейс для пользователей")
+
+  Container_Boundary(backend, "Backend Services") {
+    Container(gateway, "IoT Gateway", "Go + Kafka", "Приём телеметрии от устройств, маршрутизация команд")
+    Container(auth, "Auth Service", "Go + JWT", "Аутентификация и управление пользователями")
+    Container(heating, "Heating Service", "Go", "Управление отоплением")
+    Container(lighting, "Lighting Service", "Go", "Управление освещением")
+    Container(security, "Security/Camera Service", "Go", "Видеонаблюдение и безопасность")
+    Container(gates, "Gates Service", "Go", "Управление воротами")
+  }
+
+  ContainerDb(pg, "PostgreSQL", "Реляционная БД", "Пользователи, устройства, настройки")
+  ContainerDb(tsdb, "TimeSeries DB", "InfluxDB", "Телеметрия от датчиков")
+  Container(queue, "Message Broker", "Kafka", "Асинхронный обмен событиями")
+}
+
+System_Ext(devices, "Устройства (датчики, реле, камеры)", "IoT устройства в домах")
+
+Rel(user, webapp, "Управляет устройствами", "HTTPS")
+Rel(technician, webapp, "Оказывает поддержку", "HTTPS")
+
+Rel(webapp, auth, "Аутентификация / авторизация", "REST/JSON")
+Rel(webapp, heating, "Управление отоплением", "REST/JSON")
+Rel(webapp, lighting, "Управление освещением", "REST/JSON")
+Rel(webapp, security, "Доступ к камерам и сигнализации", "REST/JSON")
+Rel(webapp, gates, "Управление воротами", "REST/JSON")
+
+Rel(gateway, devices, "Собирает данные / отправляет команды", "HTTP")
+Rel(devices, gateway, "Отправка телеметрии", "HTTP")
+
+Rel(heating, pg, "Хранение данных", "SQL")
+Rel(lighting, pg, "Хранение данных", "SQL")
+Rel(security, tsdb, "Хранение видеопотока/метаданных", "Time-series")
+Rel(gateway, queue, "Отправляет события", "Kafka")
+
+@enduml

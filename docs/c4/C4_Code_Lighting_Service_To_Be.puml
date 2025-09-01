@@ -1,0 +1,28 @@
+@startuml
+title Lighting Service
+
+class LightingController {
+  + turnOnLight(roomId: string)
+  + turnOffLight(roomId: string)
+  + setBrightness(roomId: string, level: int)
+}
+
+class LightingService {
+  - repository: LightingRepository
+  - deviceClient: DeviceClient
+  + processLightingCommand(cmd: string)
+}
+
+class LightingRepository {
+  + saveState(lightId: string, state: string)
+  + getState(lightId: string): string
+}
+
+class DeviceClient {
+  + sendCommand(deviceId: string, command: string)
+}
+
+LightingController --> LightingService
+LightingService --> LightingRepository
+LightingService --> DeviceClient
+@enduml

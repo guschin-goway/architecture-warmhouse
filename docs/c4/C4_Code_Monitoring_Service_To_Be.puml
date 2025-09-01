@@ -1,0 +1,27 @@
+@startuml
+title Monitoring Service
+
+class MonitoringController {
+  + viewCameraFeed(cameraId: string)
+  + getSensorData(sensorId: string): string
+}
+
+class MonitoringService {
+  - repository: MonitoringRepository
+  - deviceClient: DeviceClient
+  + processMonitoringRequest(req: string)
+}
+
+class MonitoringRepository {
+  + saveTelemetry(deviceId: string, data: string)
+  + getTelemetry(deviceId: string): string
+}
+
+class DeviceClient {
+  + requestData(deviceId: string): string
+}
+
+MonitoringController --> MonitoringService
+MonitoringService --> MonitoringRepository
+MonitoringService --> DeviceClient
+@enduml

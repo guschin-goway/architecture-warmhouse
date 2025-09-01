@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Heating Service
+
+Container_Boundary(heating, "Heating Service") {
+  Component(HeatingAPI, "Heating API", "REST API", "Обработка запросов управления отоплением")
+  Component(HeatingController, "Heating Controller", "Бизнес-логика", "Определяет правила управления отоплением")
+  Component(HeatingRepository, "Heating Repository", "PostgreSQL", "Хранение состояний и расписаний")
+  Component(DeviceAdapter, "Device Adapter", "gRPC", "Команды и опрос датчиков")
+}
+
+Rel(HeatingAPI, HeatingController, "Передает команды пользователя")
+Rel(HeatingController, HeatingRepository, "Читает/сохраняет данные")
+Rel(HeatingController, DeviceAdapter, "Отправляет команды устройствам, получает данные")
+@enduml
